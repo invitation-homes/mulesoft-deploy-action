@@ -1,0 +1,21 @@
+name: 'mulesoft-deploy-action'
+description: 'Central script to modify/upload mule artifact to cloud-hub'
+author: 'Faisal Khanani'
+
+inputs:
+  release-tag:
+    description: 'release number to be build'
+    required: true
+  cloudhub-env:
+    description: 'cloudhub environment to upload jar file'
+    required: true
+  cloudhub-app-name:
+    description: 'Cloudhub application name'
+    required: true
+  cloudhub-org-id:
+    description: 'cloudhub organization id'
+    required: false
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

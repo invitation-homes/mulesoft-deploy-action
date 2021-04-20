@@ -1,0 +1,27 @@
+{
+  "name": "mulesoft-deploy-action",
+  "version": "1.0.0",
+  "description": "A GitHub Action that deploys release artifacts to Mulesoft Cloudhub",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/invitation-homes/mulesoft-deploy-action.git"
+  },
+  "author": "Faisal Khanani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/invitation-homes/mulesoft-deploy-action/issues"
+  },
+  "homepage": "https://github.com/invitation-homes/mulesoft-deploy-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
+    "@vercel/ncc": "^0.28.3",
+    "axios": "^0.21.1",
+    "form-data": "^4.0.0"
+  }
+}
