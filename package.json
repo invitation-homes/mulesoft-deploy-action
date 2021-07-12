@@ -1,6 +1,6 @@
 {
   "name": "mulesoft-deploy-action",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A GitHub Action that deploys release artifacts to Mulesoft Cloudhub",
   "main": "index.js",
   "scripts": {

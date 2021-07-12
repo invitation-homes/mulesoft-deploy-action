@@ -2,10 +2,11 @@ const core = require('@actions/core');
 const github = require('@actions/github')
 const axios = require('axios');
 const FormData = require('form-data');
+const pager = require('./pagerduty');
 
 const ORG = {
     ID: "5d528c97-b639-428c-bd03-bf3b247075c9"
- }
+}
 
 async function main() {
 
@@ -13,7 +14,7 @@ async function main() {
     const cloudhub_env = core.getInput('cloudhub-env');
     const cloudhub_app_name = core.getInput('cloudhub-app-name');
     if (!release_tag || !cloudhub_env || !cloudhub_app_name) {
-        core.setFailed("Insufficient/missing arguments...");
+        logError("Insufficient/missing arguments...");
         return;
     }
 
@@ -24,7 +25,7 @@ async function main() {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const CLOUDHUB_USER = process.env.CLOUDHUB_USER;
     const CLOUDHUB_PASSWORD = process.env.CLOUDHUB_PASSWORD;
-
+    const PAGERDUTY_INTEGRATION_KEY = process.env.PAGERDUTY_INTEGRATION_KEY;
     const octokit = github.getOctokit(GITHUB_TOKEN);
     const { context = {} } = github;
 
@@ -37,8 +38,7 @@ async function main() {
         return true;
     }
     catch (error) {
-        console.error(error);
-        core.setFailed(error.message);
+        logError(error);
         return;
     }
 }
@@ -54,8 +54,7 @@ async function getRelease(octokit, context, release_tag) {
         })).data;
     }
     catch (error) {
-        core.setFailed(error.message);
-        console.error(error);
+        logError(error);
     }
 }
 
@@ -72,8 +71,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         return toBuffer(result.data);
     }
     catch (error) {
-        core.setFailed(error.message);
-        console.error(error);
+        logError(error);
     }
 }
 
@@ -101,14 +99,12 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
                 .then(() => {
                     console.log(env[0].id + " updated successfully.");
                 }, (error) => {
-                    console.error(error);
-                    core.setFailed(error.message);
+                    logError(error);
                 })
         }
     }
     catch (error) {
-        core.setFailed(error.message);
-        console.error(error);
+        logError(error);
     }
 }
 
@@ -122,8 +118,7 @@ async function getEnvByOrgId(cloudhub_user, cloudhub_password, org_id) {
         return response.data.data;
     }
     catch (error) {
-        console.error(error);
-        core.setFailed(error.message);
+        logError(error);
     }
 }
 
@@ -134,4 +129,12 @@ function toBuffer(value) {
         buf[i] = view[i];
     }
     return buf;
+}
+
+function logError(error) {
+    core.setFailed(error.message);
+    console.error(error);
+    if (PAGERDUTY_INTEGRATION_KEY) {
+        pager.makeAndSendPagerAlert(PAGERDUTY_INTEGRATION_KEY, error);
+    }
 }
