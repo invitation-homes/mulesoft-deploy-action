@@ -25,7 +25,6 @@ async function main() {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const CLOUDHUB_USER = process.env.CLOUDHUB_USER;
     const CLOUDHUB_PASSWORD = process.env.CLOUDHUB_PASSWORD;
-    const PAGERDUTY_INTEGRATION_KEY = process.env.PAGERDUTY_INTEGRATION_KEY;
     const octokit = github.getOctokit(GITHUB_TOKEN);
     const { context = {} } = github;
 
@@ -134,6 +133,7 @@ function toBuffer(value) {
 function logError(error) {
     core.setFailed(error.message);
     console.error(error);
+    const PAGERDUTY_INTEGRATION_KEY = process.env.PAGERDUTY_INTEGRATION_KEY;
     if (PAGERDUTY_INTEGRATION_KEY) {
         pager.makeAndSendPagerAlert(PAGERDUTY_INTEGRATION_KEY, error);
     }
