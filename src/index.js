@@ -28,18 +28,27 @@ async function main() {
     const octokit = github.getOctokit(GITHUB_TOKEN);
     const { context = {} } = github;
 
+	var is_successful = false;
+	var versionId = "";
+	var commitSHA = "";
+
     try {
         const release = await getRelease(octokit, context, release_tag);
-        const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
-        const artifact = await getReleaseAsset(octokit, context, id);
-        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);
-        console.log("action executed successfully.");
-        return true;
+        const { id, name, node_id } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
+		commitSHA=node_id;
+		versionId=name;
+        const artifact = await getReleaseAsset(octokit, context, id);		
+        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+		is_successful = true;
+		console.log("action executed successfully.");
     }
     catch (error) {
         logError(error);
-        return;
-    }
+    }	
+	
+	console.log("sending deployment details to event bridge.");
+	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,xname,xnode_id);
+	return is_successful;
 }
 
 main();
@@ -103,8 +112,22 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
         }
     }
     catch (error) {
-        logError(error);
+        logError(error);		
     }
+}
+
+async function exportDeploymentDetailsToEventBridge(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA){
+	try {		
+		const response = await axios({
+            method: "post",
+            url: `https://api-dev.invitationhomes.com/ci-cd/v1/deployments`,
+            data: { "version": versionId, "commit": commitSHA, "repository": cloudhub_app_name, "environment": cloudhub_env, "isSuccessful": is_successful, "timestamp": now() }
+        })
+        return response.data;		
+	} 
+	catch (error) {
+		logError(error);
+	}
 }
 
 async function getEnvByOrgId(cloudhub_user, cloudhub_password, org_id) {
