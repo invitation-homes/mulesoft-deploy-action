@@ -47,7 +47,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,xname,xnode_id);
+	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,versionId,commitSHA);
 	return is_successful;
 }
 
