@@ -29,14 +29,12 @@ async function main() {
     const { context = {} } = github;
 
 	var is_successful = false;
-	var versionId = "";
 	var commitSHA = "";
 
     try {
         const release = await getRelease(octokit, context, release_tag);
-        const { id, name, node_id } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
-		commitSHA=node_id;
-		versionId=name;
+        const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
+		commitSHA = await getCommitSHA(octokit, context, release_tag);
         const artifact = await getReleaseAsset(octokit, context, id);		
         await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
@@ -47,7 +45,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,versionId,commitSHA);
+	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA);
 	return is_successful;
 }
 
@@ -59,6 +57,21 @@ async function getRelease(octokit, context, release_tag) {
         return (await octokit.repos.getReleaseByTag({
             ...context.repo,
             tag: release_tag
+        })).data;
+    }
+    catch (error) {
+        logError(error);
+    }
+}
+
+async function getCommitSHA(octokit, context, release_tag) {
+    try {
+        return (await octokit.request("GET /repos/{owner}/{repo}/commits/{ref}", {
+            headers: {
+                Accept: "application/vnd.github.VERSION.sha",
+            },
+            ...context.repo,
+            ref: `tags/${release_tag}`
         })).data;
     }
     catch (error) {
