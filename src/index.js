@@ -45,7 +45,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA);
+	await postDeploymentDetails(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA);
 	return is_successful;
 }
 
@@ -129,7 +129,7 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
     }
 }
 
-async function exportDeploymentDetailsToEventBridge(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA){
+async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA){
 	try {		
 		const response = await axios({
             method: "post",
