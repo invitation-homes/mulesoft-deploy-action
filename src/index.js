@@ -45,7 +45,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await exportDeploymentDetailsToEventBridge(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA);
+	await postDeploymentDetails(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA);
 	return is_successful;
 }
 
@@ -129,12 +129,22 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
     }
 }
 
-async function exportDeploymentDetailsToEventBridge(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA){
+async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA){
 	try {		
 		const response = await axios({
             method: "post",
             url: `https://api-dev.invitationhomes.com/ci-cd/v1/deployments`,
-            data: { "version": versionId, "commit": commitSHA, "repository": cloudhub_app_name, "environment": cloudhub_env, "isSuccessful": is_successful, "timestamp": Date.now() }
+            headers: {
+                'Authorization': `Bearer ${process.env.CI_CD_API_TOKEN}`
+            },
+            data: { 
+                "version": versionId, 
+                "commit": commitSHA, 
+                "repository": cloudhub_app_name, 
+                "environment": cloudhub_env, 
+                "isSuccessful": is_successful, 
+                "timestamp": Date.now()
+            }
         })
         return response.data;		
 	} 
