@@ -134,7 +134,14 @@ async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_success
 		const response = await axios({
             method: "post",
             url: `https://api-dev.invitationhomes.com/ci-cd/v1/deployments`,
-            data: { "version": versionId, "commit": commitSHA, "repository": cloudhub_app_name, "environment": cloudhub_env, "isSuccessful": is_successful, "timestamp": Date.now() }
+            data: { 
+                "version": versionId, 
+                "commit": commitSHA, 
+                "repository": cloudhub_app_name, 
+                "environment": cloudhub_env, 
+                "isSuccessful": is_successful, 
+                "timestamp": Date.now()
+            }
         })
         return response.data;		
 	} 
