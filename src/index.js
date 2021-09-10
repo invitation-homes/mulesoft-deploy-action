@@ -143,7 +143,7 @@ async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_success
                 "repository": cloudhub_app_name, 
                 "environment": cloudhub_env, 
                 "isSuccessful": is_successful, 
-                "timestamp": Date.now()
+                "timestamp": new Date().toISOString()
             }
         })
         return response.data;		
