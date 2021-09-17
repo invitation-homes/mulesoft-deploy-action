@@ -149,7 +149,7 @@ async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_success
         return response.data;		
 	} 
 	catch (error) {
-		logError(error);
+		logError(error, false);
 	}
 }
 
@@ -176,8 +176,10 @@ function toBuffer(value) {
     return buf;
 }
 
-function logError(error) {
-    core.setFailed(error.message);
+function logError(error, failWorkflow = true) {
+    if (failWorkflow == true) {
+        core.setFailed(error.message);      
+    } 
     console.error(error);
     const PAGERDUTY_INTEGRATION_KEY = process.env.PAGERDUTY_INTEGRATION_KEY;
     if (PAGERDUTY_INTEGRATION_KEY) {
