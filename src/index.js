@@ -133,7 +133,7 @@ async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_success
 	try {		
 		const response = await axios({
             method: "post",
-            url: `https://api-dev.invitationhomes.com/ci-cd/v1/deployments`,
+            url: `https://api.invitationhomes.com/ci-cd/v1/deployments`,
             headers: {
                 'Authorization': `Bearer ${process.env.CI_CD_API_TOKEN}`
             },
