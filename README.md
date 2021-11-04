@@ -1,6 +1,6 @@
-# Mulesoft Deploy Action
+# MuleSoft Deploy Action
 
-A GitHub Action that downloads the specified release artifact from the GitHub repository and uploads it to the Mulesoft Cloudhub runtime environment.
+A GitHub Action that downloads the specified release artifact from the GitHub repository and uploads it to the MuleSoft CloudHub runtime environment.
 
 ## Usage
 Add the following steps in your workflow:
@@ -17,8 +17,14 @@ Add the following steps in your workflow:
           CLOUDHUB_PASSWORD: ${{secrets.MULESOFT_DEPLOY_PASSWORD }} 
 ```
 
+## Building
+
+When updating this GitHub action to add functionality or fix an issue:
+
+1. Make the necessary changes in `index.js`
+1. Run `yarn && yarn build` to build a new `dist/index.js` file
+1. Commit both files
 
 ## License
 
 This code is made available under the MIT license.
-
