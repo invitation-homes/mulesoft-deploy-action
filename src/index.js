@@ -117,6 +117,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("status:" + result.status);
         console.log("statusText:" + result.statusText);
         console.log("headers:  %j", result.headers);
+        console.log("data: " + result.data);
         return toBuffer(result.data);
     }
     catch (error) {
