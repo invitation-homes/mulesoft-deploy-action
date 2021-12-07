@@ -10360,7 +10360,7 @@ async function getReleaseAsset(octokit, context, assetId) {
                 Accept: "application/octet-stream"
             }
         })
-        console.log("result 0:  %j" + result);
+        console.log("result 0:  %j", result);
         console.log("result 1: " + result);
         return toBuffer(result.data);;
     }
