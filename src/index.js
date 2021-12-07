@@ -82,7 +82,7 @@ async function getCommitSHA(octokit, context, release_tag) {
 async function getReleaseAsset(octokit, context, assetId) {
 
     try {
-        let { headers } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}}", {
+        let { headers } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
                 ...context.repo,
                 asset_id: assetId,
                 request: {
