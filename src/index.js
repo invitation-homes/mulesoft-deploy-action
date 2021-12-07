@@ -104,16 +104,22 @@ async function getReleaseAsset(octokit, context, assetId) {
             asset_id: assetId
         }));*/
         
-        result =  await axios({
+        await axios({
             method: "get",
             url: headers.location,
             headers: {
                 "Accept": "application/octet-stream"
             }
         })
-        console.log("result 0:  %j", result);
-        console.log("result 1: " + result);
-        return toBuffer(result);
+        .then((response) => {
+            console.log("response 0:  %j", response);
+            console.log("response 1: " + response);
+            return toBuffer(response.data)
+        }, (error) => {
+            console.log("error:  %j", error);
+            logError(error);
+            return null;
+        })
     }
     catch (error) {
         logError(error);
