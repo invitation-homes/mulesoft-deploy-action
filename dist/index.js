@@ -10329,8 +10329,19 @@ async function getCommitSHA(octokit, context, release_tag) {
 }
 
 async function getReleaseAsset(octokit, context, assetId) {
-    let result = null;
+
     try {
+        let { headers } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}}", {
+                ...context.repo,
+                asset_id: assetId,
+                request: {
+                    redirect: "manual",
+                },
+            }
+        );
+        console.log("headers: " + headers.location);
+        let result = null;
+        /*
         result = (await octokit.request("GET /repos/{owner}/{repo}/releases/assets/{asset_id}", {
             headers: {
                 Accept: "application/octet-stream",
@@ -10338,6 +10349,13 @@ async function getReleaseAsset(octokit, context, assetId) {
             ...context.repo,
             asset_id: assetId
         }));
+        */
+        result = await axios(headers.location, {
+            headers: {
+                Accept: 'application/octet-stream'
+            }
+        });
+        console.log("result:" + result);
         return toBuffer(result.data);
     }
     catch (error) {
