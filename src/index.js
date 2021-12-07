@@ -36,7 +36,7 @@ async function main() {
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
         const artifact = await getReleaseAsset(octokit, context, id);		
-        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+        //await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
 		console.log("action executed successfully.");
     }
@@ -82,7 +82,7 @@ async function getCommitSHA(octokit, context, release_tag) {
 async function getReleaseAsset(octokit, context, assetId) {
 
     try {
-        let { headers,url } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
+        let assets = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
                 ...context.repo,
                 asset_id: assetId,
                 request: {
@@ -90,8 +90,8 @@ async function getReleaseAsset(octokit, context, assetId) {
                 },
             }
         );
-        console.log("url: " + url);
-        console.log("headers: %j", headers);
+        console.log("assets: " + assets);
+        console.log("json assets: %j", assets);
         let result = null;
         /*
         result = (await octokit.request("GET /repos/{owner}/{repo}/releases/assets/{asset_id}", {
@@ -101,14 +101,14 @@ async function getReleaseAsset(octokit, context, assetId) {
             ...context.repo,
             asset_id: assetId
         }));
-        */
+        
         result = await axios(headers.location, {
             headers: {
                 Accept: 'application/octet-stream'
             }
         });
-        console.log("result:" + result);
-        return toBuffer(result.data);
+        console.log("result:" + result);*/
+        return null;
     }
     catch (error) {
         logError(error);
