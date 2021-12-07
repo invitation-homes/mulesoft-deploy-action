@@ -10339,7 +10339,7 @@ async function getReleaseAsset(octokit, context, assetId) {
                 },
             }
         );
-        console.log("headers: " + headers.location);
+        console.log("headers: " + headers);
         let result = null;
         /*
         result = (await octokit.request("GET /repos/{owner}/{repo}/releases/assets/{asset_id}", {
