@@ -10285,7 +10285,7 @@ async function main() {
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
         const artifact = await getReleaseAsset(octokit, context, id);		
-        //await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
 		console.log("action executed successfully.");
     }
@@ -10331,19 +10331,18 @@ async function getCommitSHA(octokit, context, release_tag) {
 async function getReleaseAsset(octokit, context, assetId) {
 
     try {
-        let assets = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
+        let { headers, status } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
                 headers: {
                     Accept: "application/octet-stream",
                 },
                 ...context.repo,
                 asset_id: assetId,
                 request: {
-                    redirect: "manual",
-                },
+                    redirect: "manual"
+                }
             }
         );
-        console.log("assets: " + assets);
-        console.log("json assets: %j", assets);
+        console.log("headers: %j", headers);
         let result = null;
         /*
         result = (await octokit.request("GET /repos/{owner}/{repo}/releases/assets/{asset_id}", {
@@ -10352,15 +10351,18 @@ async function getReleaseAsset(octokit, context, assetId) {
             },
             ...context.repo,
             asset_id: assetId
-        }));
+        }));*/
         
-        result = await axios(headers.location, {
+        result =  await axios({
+            method: "get",
+            url: headers.location,
             headers: {
-                Accept: 'application/octet-stream'
+                Accept: "application/octet-stream"
             }
-        });
-        console.log("result:" + result);*/
-        return null;
+        })
+        console.log("result 0:  %j" + result);
+        console.log("result 1: " + result);
+        return toBuffer(result.data);;
     }
     catch (error) {
         logError(error);
