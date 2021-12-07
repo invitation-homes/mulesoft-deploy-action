@@ -83,6 +83,9 @@ async function getReleaseAsset(octokit, context, assetId) {
 
     try {
         let assets = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
+                headers: {
+                    Accept: "application/octet-stream",
+                },
                 ...context.repo,
                 asset_id: assetId,
                 request: {
