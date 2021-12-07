@@ -10331,7 +10331,7 @@ async function getCommitSHA(octokit, context, release_tag) {
 async function getReleaseAsset(octokit, context, assetId) {
 
     try {
-        let { headers } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
+        let { headers,url } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
                 ...context.repo,
                 asset_id: assetId,
                 request: {
@@ -10339,7 +10339,8 @@ async function getReleaseAsset(octokit, context, assetId) {
                 },
             }
         );
-        console.log("headers: " + headers);
+        console.log("url: " + url);
+        console.log("headers: %j", headers);
         let result = null;
         /*
         result = (await octokit.request("GET /repos/{owner}/{repo}/releases/assets/{asset_id}", {
