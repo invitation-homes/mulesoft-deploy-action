@@ -3,6 +3,7 @@ const github = require('@actions/github')
 const axios = require('axios');
 const FormData = require('form-data');
 const pager = require('./pagerduty');
+var streamLength = require("stream-length");
 
 const ORG = {
     ID: "5d528c97-b639-428c-bd03-bf3b247075c9"
@@ -120,6 +121,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         //console.log("data: " + result.data);
         console.log("byteLength: " + result.data.byteLength);
         console.log("length: " + result.data.length);
+        console.log("Stream length: " + streamLength(result.data.length));
         return toBuffer(result.data, result.data.length);
     }
     catch (error) {
