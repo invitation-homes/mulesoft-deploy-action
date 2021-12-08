@@ -15585,6 +15585,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("byteLength: " + result.data.byteLength);
         console.log("length: " + result.data.length);
         console.log("data: " + result.data);
+        console.log("data: " + typeOf(result.data));
         //console.log("Stream length: %j", streamLength(result.data.length));
 
         return result.data;
