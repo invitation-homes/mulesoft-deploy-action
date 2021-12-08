@@ -15508,7 +15508,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await postDeploymentDetails(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA,context);
+	//await postDeploymentDetails(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA,context);
 	return is_successful;
 }
 
@@ -15586,15 +15586,6 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("Stream length: %j", streamLength(result.data.length));
 
         Promise.try(function(){
-            return streamLength(result.data.length);
-        })
-        .then(function(result){
-            console.log("The length of result.data is " + result);
-        })
-        .catch(function(err){
-            console.log("Could not determine length. Error: " + err.toString());
-        });
-
         return toBuffer(result.data, result.data.length);
     }
     catch (error) {
