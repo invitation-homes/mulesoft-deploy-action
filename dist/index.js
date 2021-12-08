@@ -15575,19 +15575,19 @@ async function getReleaseAsset(octokit, context, assetId) {
             },
         }));
 
-        //console.log("result 0:  %j", result);
-        //console.log("result 1: " + result);
+        console.log("result 0:  %j", result);
+        console.log("result 1: " + result);
         console.log("status:" + result.status);
         console.log("statusText:" + result.statusText);
         console.log("headers:  %j", result.headers);
-        //console.log("data: " + result.data);
         console.log("Content length 1:" + result.headers["content-length"]);
-        console.log("Content length 2:" + result.headers.content-length);
+        //console.log("Content length 2:" + result.headers.content-length);
         console.log("byteLength: " + result.data.byteLength);
         console.log("length: " + result.data.length);
-        console.log("Stream length: %j", streamLength(result.data.length));
+        console.log("data: " + result.data);
+        //console.log("Stream length: %j", streamLength(result.data.length));
 
-        return toBuffer(result.data, result.data.length);
+        return result.data;
     }
     catch (error) {
         logError(error);
