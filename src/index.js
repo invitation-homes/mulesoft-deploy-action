@@ -120,7 +120,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         //console.log("data: " + result.data);
         console.log("byteLength: " + result.data.byteLength);
         console.log("length: " + result.data.length);
-        return result.data;
+        return toBuffer(result.data, result.data.length);
     }
     catch (error) {
         logError(error);
@@ -198,8 +198,8 @@ async function getEnvByOrgId(cloudhub_user, cloudhub_password, org_id) {
     }
 }
 
-function toBuffer(value) {
-    var buf = Buffer.alloc(value.byteLength);
+function toBuffer(value, size) {
+    var buf = Buffer.alloc(size);
     var view = new Uint8Array(value);
     for (var i = 0; i < buf.length; ++i) {
         buf[i] = view[i];
