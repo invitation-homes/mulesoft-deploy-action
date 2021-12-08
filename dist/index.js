@@ -15499,7 +15499,7 @@ async function main() {
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
         const artifact = await getReleaseAsset(octokit, context, id);		
-        //await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
 		console.log("action executed successfully.");
     }
@@ -15585,10 +15585,10 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("byteLength: " + result.data.byteLength);
         console.log("length: " + result.data.length);
         console.log("data type: " + typeof(result.data));
-        console.log("data: " + result.data);
+        //console.log("data: " + result.data);
         //console.log("Stream length: %j", streamLength(result.data.length));
 
-        return result.data;
+        return Buffer.from(result.data);
     }
     catch (error) {
         logError(error);
@@ -15667,6 +15667,15 @@ async function getEnvByOrgId(cloudhub_user, cloudhub_password, org_id) {
 }
 
 function toBuffer(value, size) {
+    var buf = Buffer.alloc(size);
+    var view = new Uint8Array(value);
+    for (var i = 0; i < buf.length; ++i) {
+        buf[i] = view[i];
+    }
+    return buf;
+}
+
+function toBuffer_another(value, size) {
     var buf = Buffer.alloc(size);
     var view = new Uint8Array(value);
     for (var i = 0; i < buf.length; ++i) {
