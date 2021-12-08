@@ -36,7 +36,7 @@ async function main() {
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
         const artifact = await getReleaseAsset(octokit, context, id);		
-        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+        //await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
 		console.log("action executed successfully.");
     }
@@ -106,10 +106,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         
         result =  (await axios({
             method: "get",
-            url: headers.location,
-            headers: {
-                "Accept": "application/octet-stream"
-            }
+            url: headers.location
         }));
 
         console.log("result 0:  %j", result);
@@ -117,7 +114,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("status:" + result.status);
         console.log("statusText:" + result.statusText);
         console.log("headers:  %j", result.headers);
-        //console.log("data: " + result.data);
+        console.log("data: " + result.data);
         return result.data;
     }
     catch (error) {
