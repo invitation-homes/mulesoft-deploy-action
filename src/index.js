@@ -128,7 +128,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         const buff = Buffer.from(result.data);
         console.log("buffer length 8: " + buff.length);
         console.log("buffer type 8: " + typeof(buff));
-        const buff_16 = Buffer.from(result.data, "utf-16");
+        const buff_16 = Buffer.from(result.data, "utf16le");
         console.log("buffer length 16: " + buff_16.length);
         console.log("buffer type 16: " + typeof(buff_16));
         return buff_16;
