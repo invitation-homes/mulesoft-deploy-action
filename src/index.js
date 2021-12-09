@@ -128,13 +128,27 @@ async function getReleaseAsset(octokit, context, assetId) {
         const buff = Buffer.from(result.data);
         console.log("buffer length 8: " + buff.length);
         console.log("buffer type 8: " + typeof(buff));
+
         const buff_16 = Buffer.from(result.data, "utf16le");
         console.log("buffer length 16: " + buff_16.length);
         console.log("buffer type 16: " + typeof(buff_16));
+
         const buff_bn = Buffer.from(result.data, "binary");
         console.log("buffer length 16: " + buff_bn.length);
         console.log("buffer type 16: " + typeof(buff_bn));
-        return buff_16;
+
+        var binary, binLen, buffer, chars, i, _i;
+        binLen = result.data.length;
+        buffer = new ArrayBuffer(binLen);
+        chars  = new Uint8Array(buffer);
+        for (i = _i = 0; 0 <= binLen ? _i < binLen : _i > binLen; i = 0 <= binLen ? ++_i : --_i) {
+            chars[i] = String.prototype.charCodeAt.call(binary, i);
+        }
+        var ab = chars.buffer;
+        console.log("Array Buffer Length: " + ab.byteLength);
+        console.log("Array Buffer type: " + typeof(ab));
+     
+        return toBuffer(ab);
     }
     catch (error) {
         logError(error);
