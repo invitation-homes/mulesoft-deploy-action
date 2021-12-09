@@ -106,6 +106,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         }));*/
         
         result =  (await axios({
+            responseType: 'arraybuffer',
             method: "get",
             url: headers.location,
             headers: {
@@ -125,7 +126,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("data type: " + typeof(result.data));
         //console.log("data: " + result.data);
         //console.log("Stream length: %j", streamLength(result.data.length));
-        const buff = Buffer.from(result.data);
+        /*const buff = Buffer.from(result.data);
         console.log("buffer length 8: " + buff.length);
         console.log("buffer type 8: " + typeof(buff));
 
@@ -139,9 +140,9 @@ async function getReleaseAsset(octokit, context, assetId) {
 
         const ab = toArrayBuffer(result.data);
         console.log("Array Buffer Length: " + ab.byteLength);
-        console.log("Array Buffer type: " + typeof(ab));
+        console.log("Array Buffer type: " + typeof(ab));*/
      
-        return toBuffer(ab, ab.byteLength);
+        return toBuffer(result.data, result.data.byteLength);
     }
     catch (error) {
         logError(error);
