@@ -15611,7 +15611,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("Array Buffer Length: " + ab.byteLength);
         console.log("Array Buffer type: " + typeof(ab));
      
-        return toBuffer(ab);
+        return toBuffer(ab, ab.byteLength);
     }
     catch (error) {
         logError(error);
