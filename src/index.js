@@ -131,6 +131,9 @@ async function getReleaseAsset(octokit, context, assetId) {
         const buff_16 = Buffer.from(result.data, "utf16le");
         console.log("buffer length 16: " + buff_16.length);
         console.log("buffer type 16: " + typeof(buff_16));
+        const buff_bn = Buffer.from(result.data, "binary");
+        console.log("buffer length 16: " + buff_bn.length);
+        console.log("buffer type 16: " + typeof(buff_bn));
         return buff_16;
     }
     catch (error) {
