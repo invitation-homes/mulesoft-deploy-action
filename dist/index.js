@@ -15615,7 +15615,7 @@ function toArrayBuffer(binary) {
     var binLen, buffer, chars, i, _i;
     binLen = binary.length;
     buffer = new ArrayBuffer(binLen);
-    chars  = new Uint8Array(buffer);
+    chars  = new Uint16Array(buffer);
     for (i = _i = 0; 0 <= binLen ? _i < binLen : _i > binLen; i = 0 <= binLen ? ++_i : --_i) {
         chars[i] = String.prototype.charCodeAt.call(binary, i);
     }
