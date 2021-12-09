@@ -35,7 +35,7 @@ async function main() {
         const release = await getRelease(octokit, context, release_tag);
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
-        const artifact = await getReleaseAsset(octokit, context, id);		
+        const artifact = await getReleaseAsset_manually(octokit, context, id);		
         await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
 		is_successful = true;
 		console.log("action executed successfully.");
@@ -73,6 +73,40 @@ async function getCommitSHA(octokit, context, release_tag) {
             ...context.repo,
             ref: `tags/${release_tag}`
         })).data;
+    }
+    catch (error) {
+        logError(error);
+    }
+}
+
+async function getReleaseAsset_manually(octokit, context, assetId) {
+
+    try {
+        console.log("Sending Github request to get asset download URL.");
+        let { headers, status, url } = await octokit.request("HEAD /repos/{owner}/{repo}/releases/assets/{asset_id}", {
+                headers: {
+                    Accept: "application/octet-stream",
+                },
+                ...context.repo,
+                asset_id: assetId,
+                request: {
+                    redirect: "manual"
+                }
+            }
+        );
+        console.log("Request URL: " + url);
+        console.log("Response Status: " + status);
+        console.log("Redirect URL: " + headers.location);
+        
+        console.log("Sending Github request to download the asset.");
+        const result =  (await axios({
+            responseType: 'arraybuffer',
+            method: "get",
+            url: headers.location
+        }));
+        console.log("Response Status: " + result.status);
+        console.log("Byte Length: " + result.data.byteLength);
+        return toBuffer(result.data);
     }
     catch (error) {
         logError(error);
