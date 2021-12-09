@@ -125,8 +125,13 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("data type: " + typeof(result.data));
         //console.log("data: " + result.data);
         //console.log("Stream length: %j", streamLength(result.data.length));
-
-        return Buffer.from(result.data);
+        const buff = Buffer.from(result.data);
+        console.log("buffer length 8: " + buff.length);
+        console.log("buffer type 8: " + typeof(buff));
+        const buff_16 = Buffer.from(result.data, "utf-16");
+        console.log("buffer length 16: " + buff_16.length);
+        console.log("buffer type 16: " + typeof(buff_16));
+        return buff_16;
     }
     catch (error) {
         logError(error);
