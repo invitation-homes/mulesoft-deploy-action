@@ -15600,6 +15600,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("buffer type 16: " + typeof(buff_bn));
 
         var binary, binLen, buffer, chars, i, _i;
+        binary = result.data;
         binLen = result.data.length;
         buffer = new ArrayBuffer(binLen);
         chars  = new Uint8Array(buffer);
