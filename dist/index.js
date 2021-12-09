@@ -15599,15 +15599,7 @@ async function getReleaseAsset(octokit, context, assetId) {
         console.log("buffer length 16: " + buff_bn.length);
         console.log("buffer type 16: " + typeof(buff_bn));
 
-        var binary, binLen, buffer, chars, i, _i;
-        binary = result.data;
-        binLen = result.data.length;
-        buffer = new ArrayBuffer(binLen);
-        chars  = new Uint8Array(buffer);
-        for (i = _i = 0; 0 <= binLen ? _i < binLen : _i > binLen; i = 0 <= binLen ? ++_i : --_i) {
-            chars[i] = String.prototype.charCodeAt.call(binary, i);
-        }
-        var ab = chars.buffer;
+        const ab = toArrayBuffer(result.data);
         console.log("Array Buffer Length: " + ab.byteLength);
         console.log("Array Buffer type: " + typeof(ab));
      
@@ -15616,6 +15608,18 @@ async function getReleaseAsset(octokit, context, assetId) {
     catch (error) {
         logError(error);
     }
+}
+
+function toArrayBuffer(binary) {
+
+    var binLen, buffer, chars, i, _i;
+    binLen = binary.length;
+    buffer = new ArrayBuffer(binLen);
+    chars  = new Uint8Array(buffer);
+    for (i = _i = 0; 0 <= binLen ? _i < binLen : _i > binLen; i = 0 <= binLen ? ++_i : --_i) {
+        chars[i] = String.prototype.charCodeAt.call(binary, i);
+    }
+    return chars.buffer;
 }
 
 async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, artifact_name, cloudhub_user, cloudhub_password) {
