@@ -1,7 +1,7 @@
 {
   "name": "mulesoft-deploy-action",
-  "version": "1.1.0",
-  "description": "A GitHub Action that deploys release artifacts to Mulesoft Cloudhub",
+  "version": "1.1.1",
+  "description": "A GitHub Action that deploys release artifacts to MuleSoft CloudHub",
   "main": "index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist",
