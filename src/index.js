@@ -23,8 +23,8 @@ async function main() {
         cloudhub_org_id = ORG.ID;
 
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    const CLOUDHUB_USER = process.env.CLOUDHUB_USER;
-    const CLOUDHUB_PASSWORD = process.env.CLOUDHUB_PASSWORD;
+    const MULESOFT_CONNECTED_APP_ID = process.env.MULESOFT_CONNECTED_APP_ID;
+    const MULESOFT_CONNECTED_APP_SECRET = process.env.MULESOFT_CONNECTED_APP_SECRET;
     const octokit = github.getOctokit(GITHUB_TOKEN);
     const { context = {} } = github;
 
@@ -32,11 +32,12 @@ async function main() {
 	var commitSHA = "";
 
     try {
+        const accesstoken = await getAccessToken(MULESOFT_CONNECTED_APP_ID,MULESOFT_CONNECTED_APP_SECRET);
         const release = await getRelease(octokit, context, release_tag);
         const { id, name } = release.assets.filter(asset => asset.name.includes(release_tag))[0];
 		commitSHA = await getCommitSHA(octokit, context, release_tag);
-        const artifact = await getReleaseAsset_manually(octokit, context, id);		
-        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, CLOUDHUB_USER, CLOUDHUB_PASSWORD);		
+        const artifact = await getReleaseAsset_manually(octokit, context, id);	
+        await uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, name, MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET,accesstoken);		
 		is_successful = true;
 		console.log("action executed successfully.");
     }
@@ -51,6 +52,23 @@ async function main() {
 
 main();
 
+async function getAccessToken(MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET) {
+    try {
+        const response = await axios({
+            method: "post",
+            url: `https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token`,
+            data: {
+                "client_id" : MULESOFT_CONNECTED_APP_ID,
+                "client_secret": MULESOFT_CONNECTED_APP_SECRET,
+                "grant_type" : "client_credentials"
+            }
+        })
+        return response.data.access_token;
+    }
+    catch (error) {
+        logError(error);
+    }
+}
 
 async function getRelease(octokit, context, release_tag) {
     try {
@@ -130,9 +148,9 @@ async function getReleaseAsset(octokit, context, assetId) {
     }
 }
 
-async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, artifact_name, cloudhub_user, cloudhub_password) {
+async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name, artifact, artifact_name, MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET ,accesstoken) {
     try {
-        const environments = await getEnvByOrgId(cloudhub_user, cloudhub_password, cloudhub_org_id);
+        const environments = await getEnvByOrgId(MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET, cloudhub_org_id, accesstoken);
         const env = environments.filter(e => e.name.toUpperCase() == cloudhub_env.toUpperCase());
         if (env) {
             var form_data = new FormData();
@@ -141,14 +159,16 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
             await axios({
                 method: "post",
                 url: `https://anypoint.mulesoft.com/cloudhub/api/v2/applications/${cloudhub_app_name}/files`,
-                auth: { username: cloudhub_user, password: cloudhub_password },
                 data: form_data,
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
                 headers: {
                     ...form_data.getHeaders(),
                     "Content-Length": form_data.getLengthSync(),
-                    'X-ANYPNT-ENV-ID': env[0].id
+                    'X-ANYPNT-ENV-ID': env[0].id,
+                    Authorization: "Bearer "+accesstoken,
+                    client_id: MULESOFT_CONNECTED_APP_ID,
+                    client_secret: MULESOFT_CONNECTED_APP_SECRET
                 }
             })
                 .then(() => {
@@ -187,12 +207,16 @@ async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_success
 	}
 }
 
-async function getEnvByOrgId(cloudhub_user, cloudhub_password, org_id) {
+async function getEnvByOrgId(MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET, org_id, accesstoken) {
     try {
         const response = await axios({
             method: "get",
             url: `https://anypoint.mulesoft.com/accounts/api/organizations/${org_id}/environments`,
-            auth: { username: cloudhub_user, password: cloudhub_password }
+            headers: {
+                Authorization: "Bearer "+accesstoken,
+                client_id: MULESOFT_CONNECTED_APP_ID,
+                client_secret: MULESOFT_CONNECTED_APP_SECRET
+            }
         })
         return response.data.data;
     }
