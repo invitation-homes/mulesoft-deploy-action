@@ -3,6 +3,7 @@
 A GitHub Action that downloads the specified release artifact from the GitHub repository and uploads it to the MuleSoft CloudHub runtime environment.
 
 ## Usage
+
 Add the following steps in your workflow:
 
 ```
@@ -14,7 +15,7 @@ Add the following steps in your workflow:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           CLOUDHUB_USER: ${{secrets.MULESOFT_DEPLOY_USERNAME }}
-          CLOUDHUB_PASSWORD: ${{secrets.MULESOFT_DEPLOY_PASSWORD }} 
+          CLOUDHUB_PASSWORD: ${{secrets.MULESOFT_DEPLOY_PASSWORD }}
 ```
 
 ## Building
