@@ -19178,10 +19178,6 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-    
-  if (process.env.CI_CD_API_TOKEN)  {
-      core.info("Please remove the CI_CD_API_TOKEN environment variable from your workflow");
-  }
 
 	return is_successful;
 }
