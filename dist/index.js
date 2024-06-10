@@ -19178,7 +19178,7 @@ async function main() {
     }	
 	
 	console.log("sending deployment details to event bridge.");
-	await postDeploymentDetails(cloudhub_env,cloudhub_app_name,is_successful,release_tag,commitSHA,context);
+
 	return is_successful;
 }
 
@@ -19313,30 +19313,6 @@ async function uploadToCloudHub(cloudhub_org_id, cloudhub_env, cloudhub_app_name
     catch (error) {
         logError(error);		
     }
-}
-
-async function postDeploymentDetails(cloudhub_env, cloudhub_app_name, is_successful, versionId, commitSHA, context){
-	try {		
-		const response = await axios({
-            method: "post",
-            url: `https://ci-cd-api.invitationhomes.com/v1/deployments`,
-            headers: {
-                'Authorization': `Bearer ${process.env.CI_CD_API_TOKEN}`
-            },
-            data: { 
-                "version": versionId, 
-                "commit": commitSHA, 
-                "repository": context.repo.repo, 
-                "environment": cloudhub_env, 
-                "isSuccessful": is_successful, 
-                "timestamp": new Date().toISOString()
-            }
-        })
-        return response.data;		
-	} 
-	catch (error) {
-		logError(error, false);
-	}
 }
 
 async function getEnvByOrgId(MULESOFT_CONNECTED_APP_ID, MULESOFT_CONNECTED_APP_SECRET, org_id, accesstoken) {
