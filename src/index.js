@@ -112,15 +112,23 @@ async function getReleaseAsset_manually(octokit, context, assetId) {
                 }
             }
         );
+
+        let redirectUrl = new URL(headers.location);
+
         console.log("Request URL: " + url);
         console.log("Response Status: " + status);
         console.log("Redirect URL: " + headers.location);
         
         console.log("Sending Github request to download the asset.");
-        const result =  (await axios({
+
+        if (redirectUrl.protocol !== 'https:') {
+            throw new Error(`Insecure Protocol : ${redirectUrl.protocol}`);
+        }
+        
+        const result = (await axios({
             responseType: 'arraybuffer',
             method: "get",
-            url: headers.location
+            url: redirectUrl
         }));
         console.log("Response Status: " + result.status);
         console.log("Byte Length: " + result.data.byteLength);
